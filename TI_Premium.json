@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "version": "2025.02",
+    "generated_date": "2025-05-16",
+    "description": "台灣五大產險公司旅平險參考費率與保障內容表 (擴充天數版)",
+    "disclaimer": "本資料僅供開發測試參考，實際保費與保障內容請以各保險公司官網即時試算為準。"
+  },
+  "companies": [
+    {
+      "id": "tfmi",
+      "name": "台灣產物保險",
+      "short_name": "台灣產物",
+      "features": ["保費親民", "班機延誤門檻低", "國內旅遊CP值高"],
+      "plans": [
+        {
+          "type": "domestic",
+          "name": "國內暢遊方案",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "保額 10%",
+            "flight_delay": "定額 2,000元 (延誤4小時)",
+            "baggage_loss": "定額 2,000元",
+            "trip_cancellation": "限額 5,000元"
+          },
+          "rates": [
+            { "days": 1, "age_group": "15-70", "sum_insured": 2000000, "premium": 80 },
+            { "days": 2, "age_group": "15-70", "sum_insured": 2000000, "premium": 105 },
+            { "days": 3, "age_group": "15-70", "sum_insured": 2000000, "premium": 135 },
+            { "days": 4, "age_group": "15-70", "sum_insured": 2000000, "premium": 160 },
+            { "days": 5, "age_group": "15-70", "sum_insured": 2000000, "premium": 185 },
+            { "days": 6, "age_group": "15-70", "sum_insured": 2000000, "premium": 210 },
+            { "days": 7, "age_group": "15-70", "sum_insured": 2000000, "premium": 235 },
+            { "days": 8, "age_group": "15-70", "sum_insured": 2000000, "premium": 260 },
+            { "days": 9, "age_group": "15-70", "sum_insured": 2000000, "premium": 285 },
+            { "days": 10, "age_group": "15-70", "sum_insured": 2000000, "premium": 310 },
+            { "days": 15, "age_group": "15-70", "sum_insured": 2000000, "premium": 450 },
+            { "days": 20, "age_group": "15-70", "sum_insured": 2000000, "premium": 580 },
+            { "days": 25, "age_group": "15-70", "sum_insured": 2000000, "premium": 700 },
+            { "days": 30, "age_group": "15-70", "sum_insured": 2000000, "premium": 820 },
+            { "days": 1, "age_group": "15-70", "sum_insured": 5000000, "premium": 150 },
+            { "days": 2, "age_group": "15-70", "sum_insured": 5000000, "premium": 210 },
+            { "days": 3, "age_group": "15-70", "sum_insured": 5000000, "premium": 265 },
+            { "days": 4, "age_group": "15-70", "sum_insured": 5000000, "premium": 320 },
+            { "days": 5, "age_group": "15-70", "sum_insured": 5000000, "premium": 375 },
+            { "days": 10, "age_group": "15-70", "sum_insured": 5000000, "premium": 600 },
+            { "days": 15, "age_group": "15-70", "sum_insured": 5000000, "premium": 850 },
+            { "days": 30, "age_group": "15-70", "sum_insured": 5000000, "premium": 1500 }
+          ]
+        },
+        {
+          "type": "overseas",
+          "name": "國外輕鬆行",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "保額 10% (實支實付)",
+            "overseas_sickness": "保額 10%",
+            "flight_delay": "定額 4,000元 (延誤4小時)",
+            "baggage_loss": "定額 5,000元"
+          },
+          "rates": [
+            { "days": 1, "age_group": "15-70", "sum_insured": 5000000, "premium": 260 },
+            { "days": 2, "age_group": "15-70", "sum_insured": 5000000, "premium": 340 },
+            { "days": 3, "age_group": "15-70", "sum_insured": 5000000, "premium": 420 },
+            { "days": 4, "age_group": "15-70", "sum_insured": 5000000, "premium": 500 },
+            { "days": 5, "age_group": "15-70", "sum_insured": 5000000, "premium": 580 },
+            { "days": 6, "age_group": "15-70", "sum_insured": 5000000, "premium": 660 },
+            { "days": 7, "age_group": "15-70", "sum_insured": 5000000, "premium": 740 },
+            { "days": 8, "age_group": "15-70", "sum_insured": 5000000, "premium": 820 },
+            { "days": 9, "age_group": "15-70", "sum_insured": 5000000, "premium": 900 },
+            { "days": 10, "age_group": "15-70", "sum_insured": 5000000, "premium": 980 },
+            { "days": 15, "age_group": "15-70", "sum_insured": 5000000, "premium": 1300 },
+            { "days": 20, "age_group": "15-70", "sum_insured": 5000000, "premium": 1600 },
+            { "days": 25, "age_group": "15-70", "sum_insured": 5000000, "premium": 1900 },
+            { "days": 30, "age_group": "15-70", "sum_insured": 5000000, "premium": 2200 },
+            { "days": 60, "age_group": "15-70", "sum_insured": 5000000, "premium": 3800 },
+            { "days": 90, "age_group": "15-70", "sum_insured": 5000000, "premium": 5200 },
+            { "days": 180, "age_group": "15-70", "sum_insured": 5000000, "premium": 8500 },
+            
+            { "days": 5, "age_group": "15-70", "sum_insured": 10000000, "premium": 1100 },
+            { "days": 7, "age_group": "15-70", "sum_insured": 10000000, "premium": 1450 },
+            { "days": 10, "age_group": "15-70", "sum_insured": 10000000, "premium": 1900 },
+            { "days": 30, "age_group": "15-70", "sum_insured": 10000000, "premium": 4200 },
+            { "days": 90, "age_group": "15-70", "sum_insured": 10000000, "premium": 9800 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fubon",
+      "name": "富邦產物保險",
+      "short_name": "富邦產險",
+      "features": ["方案多元", "快樂旅平險口碑佳", "兒童投保限制明確"],
+      "plans": [
+        {
+          "type": "overseas",
+          "name": "海外快樂旅平險 (計畫T)",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "保額 10%",
+            "overseas_sickness": "保額 10%",
+            "flight_delay": "定額 5,000元 (延誤4小時)",
+            "baggage_loss": "定額 5,000元",
+            "personal_liability": "最高 50萬"
+          },
+          "rates": [
+            { "days": 1, "age_group": "15-70", "sum_insured": 6000000, "premium": 350 },
+            { "days": 2, "age_group": "15-70", "sum_insured": 6000000, "premium": 460 },
+            { "days": 3, "age_group": "15-70", "sum_insured": 6000000, "premium": 570 },
+            { "days": 4, "age_group": "15-70", "sum_insured": 6000000, "premium": 680 },
+            { "days": 5, "age_group": "15-70", "sum_insured": 6000000, "premium": 780 },
+            { "days": 6, "age_group": "15-70", "sum_insured": 6000000, "premium": 880 },
+            { "days": 7, "age_group": "15-70", "sum_insured": 6000000, "premium": 980 },
+            { "days": 8, "age_group": "15-70", "sum_insured": 6000000, "premium": 1080 },
+            { "days": 9, "age_group": "15-70", "sum_insured": 6000000, "premium": 1180 },
+            { "days": 10, "age_group": "15-70", "sum_insured": 6000000, "premium": 1250 },
+            { "days": 15, "age_group": "15-70", "sum_insured": 6000000, "premium": 1650 },
+            { "days": 20, "age_group": "15-70", "sum_insured": 6000000, "premium": 2050 },
+            { "days": 25, "age_group": "15-70", "sum_insured": 6000000, "premium": 2400 },
+            { "days": 30, "age_group": "15-70", "sum_insured": 6000000, "premium": 2750 },
+            { "days": 60, "age_group": "15-70", "sum_insured": 6000000, "premium": 4500 },
+            { "days": 90, "age_group": "15-70", "sum_insured": 6000000, "premium": 6200 },
+            { "days": 180, "age_group": "15-70", "sum_insured": 6000000, "premium": 10500 },
+            
+            { "days": 5, "age_group": "15-70", "sum_insured": 12000000, "premium": 1450 },
+            { "days": 10, "age_group": "15-70", "sum_insured": 12000000, "premium": 2300 },
+            { "days": 30, "age_group": "15-70", "sum_insured": 12000000, "premium": 5100 }
+          ]
+        },
+        {
+          "type": "schengen",
+          "name": "申根簽證專用方案",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "3萬歐元以上 (約100萬台幣)",
+            "overseas_sickness": "3萬歐元以上",
+            "emergency_assistance": "包含 (高額度)"
+          },
+          "rates": [
+             { "days": 7, "age_group": "15-70", "sum_insured": 6000000, "premium": 1300 },
+             { "days": 10, "age_group": "15-70", "sum_insured": 6000000, "premium": 1680 },
+             { "days": 15, "age_group": "15-70", "sum_insured": 6000000, "premium": 2100 },
+             { "days": 20, "age_group": "15-70", "sum_insured": 6000000, "premium": 2500 },
+             { "days": 30, "age_group": "15-70", "sum_insured": 6000000, "premium": 3300 },
+             { "days": 90, "age_group": "15-70", "sum_insured": 6000000, "premium": 7500 },
+             { "days": 180, "age_group": "15-70", "sum_insured": 6000000, "premium": 12500 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cathay",
+      "name": "國泰世紀產物",
+      "short_name": "國泰產險",
+      "features": ["理賠快速", "班機延誤定額高", "豪華/基本方案區隔"],
+      "plans": [
+        {
+          "type": "overseas",
+          "name": "海外遊 - 豪華型",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "保額 10%",
+            "flight_delay": "定額 10,000元 (每3小時)",
+            "baggage_loss": "定額 10,000元",
+            "trip_alteration": "限額 30,000元"
+          },
+          "rates": [
+            { "days": 3, "age_group": "18-65", "sum_insured": 5000000, "premium": 700 },
+            { "days": 5, "age_group": "18-65", "sum_insured": 5000000, "premium": 920 },
+            { "days": 7, "age_group": "18-65", "sum_insured": 5000000, "premium": 1150 },
+            { "days": 10, "age_group": "18-65", "sum_insured": 5000000, "premium": 1450 },
+            { "days": 15, "age_group": "18-65", "sum_insured": 5000000, "premium": 1900 },
+            { "days": 30, "age_group": "18-65", "sum_insured": 5000000, "premium": 3100 },
+            { "days": 60, "age_group": "18-65", "sum_insured": 5000000, "premium": 5200 },
+            
+            { "days": 5, "age_group": "18-65", "sum_insured": 10000000, "premium": 1650 },
+            { "days": 10, "age_group": "18-65", "sum_insured": 10000000, "premium": 2600 }
+          ]
+        },
+        {
+          "type": "overseas",
+          "name": "海外遊 - 基本型",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "保額 5%",
+            "flight_delay": "定額 3,000元",
+            "baggage_loss": "定額 3,000元"
+          },
+          "rates": [
+            { "days": 1, "age_group": "18-65", "sum_insured": 5000000, "premium": 250 },
+            { "days": 3, "age_group": "18-65", "sum_insured": 5000000, "premium": 400 },
+            { "days": 5, "age_group": "18-65", "sum_insured": 5000000, "premium": 550 },
+            { "days": 7, "age_group": "18-65", "sum_insured": 5000000, "premium": 720 },
+            { "days": 10, "age_group": "18-65", "sum_insured": 5000000, "premium": 950 },
+            { "days": 15, "age_group": "18-65", "sum_insured": 5000000, "premium": 1250 },
+            { "days": 30, "age_group": "18-65", "sum_insured": 5000000, "premium": 2100 },
+            { "days": 90, "age_group": "18-65", "sum_insured": 5000000, "premium": 4800 },
+            { "days": 180, "age_group": "18-65", "sum_insured": 5000000, "premium": 8200 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tokio",
+      "name": "新安東京海上產險",
+      "short_name": "新安東京",
+      "features": ["日系服務", "平安福專案", "特定活動保障"],
+      "plans": [
+        {
+          "type": "overseas",
+          "name": "平安福海外試算",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "實支實付",
+            "flight_delay": "依時數定額 (4hr/2000起)",
+            "baggage_loss": "定額 3,000元"
+          },
+          "rates": [
+            { "days": 1, "age_group": "20-60", "sum_insured": 6000000, "premium": 320 },
+            { "days": 3, "age_group": "20-60", "sum_insured": 6000000, "premium": 500 },
+            { "days": 5, "age_group": "20-60", "sum_insured": 6000000, "premium": 680 },
+            { "days": 7, "age_group": "20-60", "sum_insured": 6000000, "premium": 860 },
+            { "days": 8, "age_group": "20-60", "sum_insured": 6000000, "premium": 950 },
+            { "days": 10, "age_group": "20-60", "sum_insured": 6000000, "premium": 1130 },
+            { "days": 15, "age_group": "20-60", "sum_insured": 6000000, "premium": 1500 },
+            { "days": 20, "age_group": "20-60", "sum_insured": 6000000, "premium": 1850 },
+            { "days": 30, "age_group": "20-60", "sum_insured": 6000000, "premium": 2500 },
+            { "days": 60, "age_group": "20-60", "sum_insured": 6000000, "premium": 4200 },
+            { "days": 180, "age_group": "20-60", "sum_insured": 6000000, "premium": 9800 },
+            
+            { "days": 5, "age_group": "20-60", "sum_insured": 10000000, "premium": 1150 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chubb",
+      "name": "安達產物保險",
+      "short_name": "安達產險",
+      "features": ["全球支援", "申根保險首選", "海外急難救助強"],
+      "plans": [
+        {
+          "type": "schengen",
+          "name": "申根歐洲精選",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "符合申根規範",
+            "flight_delay": "定額 3,000元起",
+            "overseas_sickness": "高額度保障"
+          },
+          "rates": [
+            { "days": 7, "age_group": "15-75", "sum_insured": 5000000, "premium": 1100 },
+            { "days": 10, "age_group": "15-75", "sum_insured": 5000000, "premium": 1450 },
+            { "days": 15, "age_group": "15-75", "sum_insured": 5000000, "premium": 1980 },
+            { "days": 20, "age_group": "15-75", "sum_insured": 5000000, "premium": 2450 },
+            { "days": 30, "age_group": "15-75", "sum_insured": 5000000, "premium": 3300 },
+            { "days": 60, "age_group": "15-75", "sum_insured": 5000000, "premium": 5800 },
+            { "days": 90, "age_group": "15-75", "sum_insured": 5000000, "premium": 7900 },
+            { "days": 180, "age_group": "15-75", "sum_insured": 5000000, "premium": 13500 },
+            
+            { "days": 10, "age_group": "15-75", "sum_insured": 10000000, "premium": 2400 }
+          ]
+        },
+        {
+          "type": "overseas",
+          "name": "全球旅遊保障",
+          "coverage_details": {
+            "accident_death": "依保額",
+            "medical_injury": "保額 10%",
+            "flight_delay": "定額 3,000元"
+          },
+          "rates": [
+            { "days": 1, "age_group": "15-75", "sum_insured": 5000000, "premium": 280 },
+            { "days": 3, "age_group": "15-75", "sum_insured": 5000000, "premium": 450 },
+            { "days": 5, "age_group": "15-75", "sum_insured": 5000000, "premium": 620 },
+            { "days": 7, "age_group": "15-75", "sum_insured": 5000000, "premium": 850 },
+            { "days": 10, "age_group": "15-75", "sum_insured": 5000000, "premium": 1100 },
+            { "days": 15, "age_group": "15-75", "sum_insured": 5000000, "premium": 1550 },
+            { "days": 30, "age_group": "15-75", "sum_insured": 5000000, "premium": 2600 },
+            { "days": 60, "age_group": "15-75", "sum_insured": 5000000, "premium": 4600 },
+            { "days": 180, "age_group": "15-75", "sum_insured": 5000000, "premium": 9200 }
+          ]
+        }
+      ]
+    }
+  ]
+}

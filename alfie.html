@@ -1,0 +1,657 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Send, MapPin, Calendar, Plane, Shield, ChevronRight, RefreshCw, X, Clock, User, CheckCircle, ThumbsUp, Star, TrendingDown } from 'lucide-react';
+
+// --- Mock Data ---
+
+const SCHENGEN_COUNTRIES = [
+  "奧地利", "比利時", "捷克", "丹麥", "愛沙尼亞", "芬蘭", "法國", "德國", "希臘", "匈牙利",
+  "冰島", "義大利", "拉脫維亞", "列支敦斯登", "立陶宛", "盧森堡", "馬爾他", "荷蘭", "挪威",
+  "波蘭", "葡萄牙", "斯洛伐克", "斯洛維尼亞", "西班牙", "瑞典", "瑞士", "克羅埃西亞"
+];
+
+const HOT_SPOTS = [
+  { label: "🇹🇼 台灣國內", value: "domestic" },
+  { label: "🇯🇵 日本", value: "overseas" },
+  { label: "🇰🇷 韓國", value: "overseas" },
+  { label: "🇫🇷 法國 (申根)", value: "schengen" },
+  { label: "🇺🇸 美國", value: "overseas" },
+];
+
+const PREMIUM_DATA = {
+  tfmi: {
+    name: "台灣產物保險",
+    plans: [
+      { 
+        type: "domestic", name: "國內暢遊方案", 
+        tags: ["意外身故", "傷害醫療10%", "班機延誤2千"],
+        rates: [
+          { days: 1, sum: 2000000, prem: 80 }, { days: 2, sum: 2000000, prem: 105 }, { days: 3, sum: 2000000, prem: 135 },
+          { days: 4, sum: 2000000, prem: 160 }, { days: 5, sum: 2000000, prem: 185 }, { days: 10, sum: 2000000, prem: 310 },
+          { days: 1, sum: 5000000, prem: 150 }, { days: 2, sum: 5000000, prem: 210 }, { days: 5, sum: 5000000, prem: 375 }
+        ]
+      },
+      { 
+        type: "overseas", name: "國外輕鬆行", 
+        tags: ["海外突發疾病", "班機延誤4千", "行李遺失"],
+        rates: [
+          { days: 1, sum: 5000000, prem: 260 }, { days: 5, sum: 5000000, prem: 580 }, { days: 10, sum: 5000000, prem: 980 },
+          { days: 5, sum: 10000000, prem: 1100 }, { days: 7, sum: 10000000, prem: 1450 }, { days: 10, sum: 10000000, prem: 1900 },
+          { days: 30, sum: 10000000, prem: 4200 }
+        ]
+      }
+    ]
+  },
+  fubon: {
+    name: "富邦產險",
+    plans: [
+      { 
+        type: "overseas", name: "海外快樂旅平險", 
+        tags: ["個人責任險", "班機延誤5千", "海外突發疾病"],
+        rates: [
+          { days: 1, sum: 6000000, prem: 350 }, { days: 5, sum: 6000000, prem: 780 }, { days: 10, sum: 6000000, prem: 1250 },
+          { days: 5, sum: 12000000, prem: 1450 }, { days: 10, sum: 12000000, prem: 2300 }, { days: 30, sum: 12000000, prem: 5100 }
+        ]
+      },
+      { 
+        type: "schengen", name: "申根簽證專用", 
+        tags: ["申根高額醫療", "SOS急難救助", "符合簽證規範"],
+        rates: [
+          { days: 7, sum: 6000000, prem: 1300 }, { days: 10, sum: 6000000, prem: 1680 }, { days: 15, sum: 6000000, prem: 2100 }
+        ]
+      }
+    ]
+  },
+  cathay: {
+    name: "國泰產險",
+    plans: [
+      { 
+        type: "overseas", name: "海外遊 - 豪華型", 
+        tags: ["班機延誤1萬", "旅程更改", "高額醫療"],
+        rates: [
+          { days: 3, sum: 5000000, prem: 700 }, { days: 5, sum: 5000000, prem: 920 },
+          { days: 5, sum: 10000000, prem: 1650 }, { days: 10, sum: 10000000, prem: 2600 }
+        ]
+      }
+    ]
+  },
+  tokio: {
+    name: "新安東京",
+    plans: [
+      { 
+        type: "overseas", name: "平安福海外", 
+        tags: ["醫療實支實付", "班機延誤", "行李損失"],
+        rates: [
+          { days: 1, sum: 6000000, prem: 320 }, { days: 5, sum: 6000000, prem: 680 },
+          { days: 5, sum: 10000000, prem: 1150 }
+        ]
+      }
+    ]
+  },
+  chubb: {
+    name: "安達產險",
+    plans: [
+      { 
+        type: "schengen", name: "申根歐洲精選", 
+        tags: ["全球支援", "申根合規", "高額突發疾病"],
+        rates: [
+           { days: 7, sum: 5000000, prem: 1100 }, { days: 10, sum: 10000000, prem: 2400 }
+        ]
+      },
+      { 
+        type: "overseas", name: "全球旅遊保障", 
+        tags: ["全球支援", "傷害醫療", "班機延誤"],
+        rates: [
+          { days: 1, sum: 5000000, prem: 280 }, { days: 5, sum: 5000000, prem: 620 }
+        ]
+      }
+    ]
+  }
+};
+
+// --- Helper Functions ---
+
+const interpolate = (x, x1, y1, x2, y2) => {
+  if (x2 === x1) return y1;
+  return y1 + (x - x1) * ((y2 - y1) / (x2 - x1));
+};
+
+const calculatePremium = (companyId, plan, days, targetSum = 10000000) => {
+  const rates = plan.rates;
+  let relevantRates = rates.filter(r => r.sum >= targetSum);
+  if (relevantRates.length === 0) {
+    const maxSum = Math.max(...rates.map(r => r.sum));
+    relevantRates = rates.filter(r => r.sum === maxSum);
+  } else {
+    const minRelevantSum = Math.min(...relevantRates.map(r => r.sum));
+    relevantRates = relevantRates.filter(r => r.sum === minRelevantSum);
+  }
+  
+  relevantRates.sort((a, b) => a.days - b.days);
+
+  const getPriceForDay = (d) => {
+    if (d <= 0) return 0;
+    const exact = relevantRates.find(r => r.days === d);
+    if (exact) return exact.prem;
+
+    const lower = relevantRates.filter(r => r.days < d).pop();
+    const upper = relevantRates.find(r => r.days > d);
+
+    if (lower && upper) {
+      return Math.round(interpolate(d, lower.days, lower.prem, upper.days, upper.prem));
+    } else if (lower) {
+      return Math.round(lower.prem * (d / lower.days)); 
+    } else if (upper) {
+      return Math.round(upper.prem * (d / upper.days));
+    }
+    return 0;
+  };
+
+  const centerPrice = getPriceForDay(days);
+  const minPrice = getPriceForDay(days - 1);
+  const maxPrice = getPriceForDay(days + 1);
+
+  return {
+    sumInsured: relevantRates[0]?.sum || 0,
+    center: centerPrice,
+    range: [
+      Math.min(minPrice > 0 ? minPrice : centerPrice, centerPrice), 
+      Math.max(maxPrice, centerPrice)
+    ]
+  };
+};
+
+const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
+const App = () => {
+  // --- State ---
+  const [messages, setMessages] = useState([
+    { 
+      id: generateId(), 
+      sender: 'bot', 
+      text: '您好，我是阿福保險管家！我是您的 AI 投保助理。\n\n請問您這次旅行的目的地是哪裡呢？(例如：日本、法國、或國內旅遊)' 
+    }
+  ]);
+  const [inputText, setInputText] = useState('');
+  const [step, setStep] = useState('DESTINATION'); // DESTINATION, DATES, CONFIRM, QUOTATION
+  const [tripData, setTripData] = useState({
+    location: '',
+    locationType: '', 
+    startTime: null,
+    endTime: null,
+    days: 0
+  });
+  const [quotes, setQuotes] = useState([]);
+  
+  const [datePickerValues, setDatePickerValues] = useState({
+    startDate: '',
+    startTime: '08:00',
+    endDate: '',
+    endTime: '08:00'
+  });
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(scrollToBottom, [messages]);
+
+  // --- Logic Handlers ---
+
+  const addMessage = (sender, text, type = 'text', data = null) => {
+    setMessages(prev => [...prev, { id: generateId(), sender, text, type, data }]);
+  };
+
+  const handleDestination = (input) => {
+    let type = 'overseas';
+    let cleanInput = input.trim();
+
+    if (cleanInput.includes('國內') || cleanInput.includes('台灣') || cleanInput.includes('台東') || cleanInput.includes('台北')) {
+      type = 'domestic';
+    } else if (SCHENGEN_COUNTRIES.some(c => cleanInput.includes(c)) || cleanInput.includes('申根') || cleanInput.includes('歐洲')) {
+      type = 'schengen';
+    }
+
+    setTripData(prev => ({ ...prev, location: cleanInput, locationType: type }));
+    setStep('DATES');
+    
+    const tmr = new Date();
+    tmr.setDate(tmr.getDate() + 1);
+    const dateStr = tmr.toISOString().split('T')[0];
+    setDatePickerValues(prev => ({ ...prev, startDate: dateStr, endDate: dateStr }));
+
+    setTimeout(() => {
+      addMessage('bot', `收到，您的目的地是 **${cleanInput}** (${type === 'schengen' ? '申根地區' : type === 'domestic' ? '國內旅遊' : '海外旅遊'})。`);
+      addMessage('bot', `請告知您的 **出發** 與 **返回** 時間。\n\n您可以直接輸入(如：下週五去五天)，或使用上方的日期選擇器。`);
+    }, 500);
+  };
+
+  const parseDateInput = (input) => {
+    const dateRegex = /(\d{4})?[/-](\d{1,2})[/-](\d{1,2})/g;
+    const datesFound = [...input.matchAll(dateRegex)];
+    const now = new Date();
+
+    if (datesFound.length >= 2) {
+       const d1 = datesFound[0];
+       const d2 = datesFound[1];
+       const year1 = d1[1] ? parseInt(d1[1]) : now.getFullYear();
+       const year2 = d2[1] ? parseInt(d2[1]) : now.getFullYear();
+       const start = new Date(year1, parseInt(d1[2])-1, parseInt(d1[3]), 8, 0); 
+       const end = new Date(year2, parseInt(d2[2])-1, parseInt(d2[3]), 8, 0);
+       return { start, end };
+    } 
+    
+    if (input.includes('天')) {
+        const daysMatch = input.match(/(\d+)天/);
+        if (daysMatch) {
+            const days = parseInt(daysMatch[1]);
+            const start = new Date();
+            start.setDate(start.getDate() + 1);
+            start.setHours(8, 0, 0, 0);
+            const end = new Date(start);
+            end.setDate(end.getDate() + (days - 1)); 
+            return { start, end };
+        }
+    }
+    return null;
+  };
+
+  const handleDateInput = (input) => {
+      const result = parseDateInput(input);
+      if (result) {
+          processDates(result.start, result.end);
+      } else {
+          addMessage('bot', '不好意思，我不太確定您輸入的日期。請再次確認格式，或直接使用上方的日期選擇器按鈕提交喔！');
+      }
+  };
+
+  const processDates = (start, end) => {
+    const now = new Date();
+    const minTime = new Date(now.getTime() + 4 * 60 * 60 * 1000);
+    if (start < minTime) {
+        addMessage('bot', '⚠️ 投保生效時間必須距離現在至少 4 小時之後喔！請調整您的出發時間。');
+        return;
+    }
+    if (end <= start) {
+        addMessage('bot', '⚠️ 返回時間必須晚於出發時間喔！');
+        return;
+    }
+
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const finalDays = diffDays === 0 ? 1 : diffDays;
+
+    setTripData(prev => ({ 
+      ...prev, 
+      startTime: start, 
+      endTime: end, 
+      days: finalDays 
+    }));
+    
+    setStep('QUOTATION');
+
+    setTimeout(() => {
+        const fmtStart = start.toLocaleString('zh-TW', { month:'numeric', day:'numeric', hour:'numeric', minute:'numeric'});
+        const fmtEnd = end.toLocaleString('zh-TW', { month:'numeric', day:'numeric', hour:'numeric', minute:'numeric'});
+        
+        addMessage('bot', `好的！為您確認行程：\n📅 **${fmtStart}** 至 **${fmtEnd}**\n共計 **${finalDays}** 天。`);
+        addMessage('bot', '正在為您計算最佳方案與比價...', 'loading');
+        
+        setTimeout(() => {
+            generateQuotes(tripData.locationType, finalDays);
+        }, 1500);
+    }, 500);
+  };
+
+  const submitDatesFromPicker = () => {
+    const { startDate, startTime, endDate, endTime } = datePickerValues;
+    if (!startDate || !startTime || !endDate || !endTime) return;
+
+    const start = new Date(`${startDate}T${startTime}`);
+    const end = new Date(`${endDate}T${endTime}`);
+    
+    addMessage('user', `我要從 ${startDate} ${startTime} 出發，到 ${endDate} ${endTime} 返回`);
+    processDates(start, end);
+  };
+
+  const generateQuotes = (locType, days) => {
+    const results = [];
+    
+    Object.keys(PREMIUM_DATA).forEach(key => {
+      const company = PREMIUM_DATA[key];
+      const validPlans = company.plans.filter(p => {
+        if (locType === 'domestic') return p.type === 'domestic';
+        if (locType === 'schengen') return p.type === 'schengen' || p.type === 'overseas';
+        return p.type === 'overseas';
+      });
+
+      validPlans.forEach(plan => {
+        const quote = calculatePremium(key, plan, days);
+        if (quote.center > 0) {
+          // Custom Badge Logic
+          let badge = null;
+          let badgeType = 'default';
+
+          if (key === 'cathay') {
+            badge = '阿福推薦';
+            badgeType = 'recommend';
+          } else if (key === 'fubon') {
+            badge = '保障充足';
+            badgeType = 'sufficient';
+          } else if (key === 'chubb') {
+            badge = '經濟實惠';
+            badgeType = 'economic';
+          }
+
+          results.push({
+            companyId: key,
+            companyName: company.name,
+            planName: plan.name,
+            sumInsured: quote.sumInsured,
+            price: quote.center,
+            range: quote.range,
+            tags: plan.tags || [],
+            badge,
+            badgeType
+          });
+        }
+      });
+    });
+
+    results.sort((a, b) => b.range[1] - a.range[1]);
+
+    setMessages(prev => prev.filter(m => m.type !== 'loading'));
+    setQuotes(results);
+    
+    const responseText = `為您找到以下五家保險公司的方案。
+各家保險公司都有些微的差異與保障額度的不同。
+但唯一相同的都是提供意外身故至少保障1000萬，以及100萬的海外緊急醫療，哪一個保障方案內容或保費符合您的期望呢?
+還是您有其他更多問題想了解?`;
+
+    // 1. Send Text Message first
+    addMessage('bot', responseText);
+
+    // 2. Send Cards Message separately (slightly delayed for effect)
+    setTimeout(() => {
+        addMessage('bot', '', 'quote_cards', results);
+    }, 400);
+  };
+
+  const handleInput = () => {
+    if (!inputText.trim()) return;
+    const text = inputText;
+    setInputText('');
+    addMessage('user', text);
+
+    setTimeout(() => {
+      const irrelevantKeywords = ['天氣', '股票', '笑話', '吃飯', '聊天'];
+      if (irrelevantKeywords.some(kw => text.includes(kw))) {
+        let guideMsg = '阿福目前專注於協助您投保，我們可以先完成投保流程再來聊聊其他話題喔！';
+        addMessage('bot', guideMsg);
+        return;
+      }
+
+      if (step === 'DESTINATION') {
+        handleDestination(text);
+      } else if (step === 'DATES') {
+        handleDateInput(text);
+      }
+    }, 600);
+  };
+
+  const handleQuickReply = (val, label) => {
+    setInputText(label);
+    setTimeout(() => {
+        addMessage('user', label);
+        if (step === 'DESTINATION') {
+            setTimeout(() => handleDestination(label), 500);
+        }
+    }, 100);
+    setInputText('');
+  };
+
+  const restart = () => {
+    setMessages([{ id: generateId(), sender: 'bot', text: '重新開始囉！請問您這次的旅遊目的地是？' }]);
+    setStep('DESTINATION');
+    setTripData({ location: '', locationType: '', startTime: null, endTime: null, days: 0 });
+    setQuotes([]);
+    setDatePickerValues({ startDate: '', startTime: '08:00', endDate: '', endTime: '08:00' });
+  };
+
+  // --- Components ---
+
+  const QuoteCard = ({ quote }) => {
+    // Determine Badge Style
+    let badgeStyle = "bg-[#4bbebe]/10 text-[#2a8585] border-[#4bbebe]/20"; // Default
+    let badgeIcon = null;
+
+    if (quote.badgeType === 'recommend') { // Cathay
+        badgeStyle = "bg-orange-100 text-orange-700 border-orange-200 font-bold";
+        badgeIcon = <Star className="w-3 h-3 fill-orange-500 text-orange-500 mr-1" />;
+    } else if (quote.badgeType === 'sufficient') { // Fubon
+        badgeStyle = "bg-blue-100 text-blue-700 border-blue-200 font-bold";
+        badgeIcon = <Shield className="w-3 h-3 text-blue-600 mr-1" />;
+    } else if (quote.badgeType === 'economic') { // Chubb
+        badgeStyle = "bg-emerald-100 text-emerald-700 border-emerald-200 font-bold";
+        badgeIcon = <TrendingDown className="w-3 h-3 text-emerald-600 mr-1" />;
+    }
+
+    return (
+        <div className="min-w-[280px] md:min-w-[320px] bg-white rounded-xl shadow-lg border border-[#4bbebe]/20 p-5 flex flex-col snap-center mx-2 h-full relative overflow-hidden">
+        
+        {/* Top Badge (Absolute Positioned for consistency) */}
+        {quote.badge && (
+            <div className={`absolute top-0 right-0 px-3 py-1.5 text-xs rounded-bl-xl border-l border-b flex items-center shadow-sm ${badgeStyle}`}>
+                {badgeIcon}
+                {quote.badge}
+            </div>
+        )}
+
+        <div className="flex justify-between items-start mb-4 mt-2">
+            <div className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded">
+            {quote.companyName}
+            </div>
+        </div>
+        
+        <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight">{quote.planName}</h3>
+        <div className="text-sm text-slate-500 mb-4 pb-4 border-b border-slate-100">
+            意外身故保額: <span className="font-medium text-slate-800 text-lg ml-1">{(quote.sumInsured / 10000).toLocaleString()} 萬</span>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+            {quote.tags.slice(0, 3).map((tag, idx) => (
+                <span key={idx} className="text-[11px] bg-[#4bbebe]/5 text-[#3aa8a8] px-2 py-1 rounded-md border border-[#4bbebe]/20">
+                    {tag}
+                </span>
+            ))}
+        </div>
+        
+        <div className="mt-auto">
+            <div className="flex flex-col mb-3">
+                <span className="text-xs text-slate-400 mb-1">預估保費範圍</span>
+                <div className="text-2xl font-bold text-[#4bbebe]">
+                    ${quote.range[0].toLocaleString()} ~ ${quote.range[1].toLocaleString()}
+                </div>
+            </div>
+            <button className="w-full bg-[#4bbebe] hover:bg-[#3aa8a8] text-white py-3 rounded-lg text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-2">
+            選擇此方案 <ChevronRight className="w-4 h-4" />
+            </button>
+        </div>
+        </div>
+    );
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-slate-50 font-sans text-slate-900 max-w-2xl mx-auto shadow-2xl overflow-hidden">
+      
+      {/* Header */}
+      <header className="bg-[#4bbebe] p-4 flex items-center justify-between text-white shrink-0 shadow-md z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
+             <span className="text-2xl">🕵️</span>
+          </div>
+          <div>
+            <h1 className="font-bold text-lg tracking-wide">阿福保險管家</h1>
+            <p className="text-xs text-white/90">投保旅平險AI專案</p>
+          </div>
+        </div>
+        <button onClick={restart} className="p-2 hover:bg-white/10 rounded-full transition-colors text-white" title="重新開始">
+          <RefreshCw className="w-5 h-5" />
+        </button>
+      </header>
+
+      {/* Chat Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 scroll-smooth">
+        {messages.map((msg) => {
+            // Render Card-Only Message
+            if (msg.type === 'quote_cards') {
+                return (
+                    <div key={msg.id} className="w-full my-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex overflow-x-auto pb-6 pt-2 px-2 snap-x space-x-3 scrollbar-hide -mx-4 md:mx-0 pl-6 md:pl-2">
+                            {msg.data.map((quote, idx) => (
+                                <QuoteCard key={idx} quote={quote} />
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Render Standard Text Bubble
+            return (
+                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`flex gap-2 max-w-[85%] ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                    
+                    {/* Avatar */}
+                    <div className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm shadow-sm
+                        ${msg.sender === 'user' 
+                        ? 'bg-slate-200 text-slate-600' 
+                        : 'bg-[#4bbebe] text-white border-2 border-white'}`}>
+                        {msg.sender === 'user' ? <User className="w-5 h-5" /> : '🕵️'}
+                    </div>
+
+                    {/* Message Bubble */}
+                    <div className={`rounded-2xl p-3.5 shadow-sm text-sm leading-relaxed whitespace-pre-wrap relative
+                        ${msg.sender === 'user' 
+                        ? 'bg-[#4bbebe] text-white rounded-tr-none' 
+                        : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'}`}>
+                        
+                        {msg.type === 'loading' ? (
+                        <div className="flex gap-1 items-center h-5 px-2">
+                            <span className="w-1.5 h-1.5 bg-[#4bbebe] rounded-full animate-bounce"></span>
+                            <span className="w-1.5 h-1.5 bg-[#4bbebe] rounded-full animate-bounce delay-100"></span>
+                            <span className="w-1.5 h-1.5 bg-[#4bbebe] rounded-full animate-bounce delay-200"></span>
+                        </div>
+                        ) : (
+                        msg.text
+                        )}
+                    </div>
+                    </div>
+                </div>
+            );
+        })}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Area */}
+      <div className="bg-white border-t border-slate-200 p-3 shrink-0 pb-6 z-10">
+        
+        {step === 'DESTINATION' && (
+          <div className="flex gap-2 mb-3 overflow-x-auto pb-1 scrollbar-hide">
+            {HOT_SPOTS.map((spot, idx) => (
+              <button 
+                key={idx}
+                onClick={() => handleQuickReply(spot.value, spot.label)}
+                className="whitespace-nowrap px-4 py-2 bg-[#4bbebe]/5 text-[#2a8585] rounded-full text-xs font-medium border border-[#4bbebe]/20 hover:bg-[#4bbebe]/10 transition-colors shadow-sm"
+              >
+                {spot.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {step === 'DATES' && (
+            <div className="mb-3 p-3 bg-[#4bbebe]/5 rounded-xl border border-[#4bbebe]/20 shadow-inner">
+                <div className="flex items-center gap-2 mb-2 text-xs font-bold text-[#2a8585]">
+                    <Calendar className="w-3 h-3" /> 日期選擇器 (或於下方直接輸入)
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] text-slate-500 font-medium ml-1">出發時間</label>
+                        <div className="flex gap-1">
+                            <input 
+                                type="date" 
+                                className="w-full text-xs p-1.5 rounded border border-slate-300 focus:border-[#4bbebe] outline-none"
+                                value={datePickerValues.startDate}
+                                onChange={(e) => setDatePickerValues({...datePickerValues, startDate: e.target.value})}
+                            />
+                            <input 
+                                type="time" 
+                                className="w-full text-xs p-1.5 rounded border border-slate-300 focus:border-[#4bbebe] outline-none"
+                                value={datePickerValues.startTime}
+                                onChange={(e) => setDatePickerValues({...datePickerValues, startTime: e.target.value})}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] text-slate-500 font-medium ml-1">返回時間</label>
+                        <div className="flex gap-1">
+                            <input 
+                                type="date" 
+                                className="w-full text-xs p-1.5 rounded border border-slate-300 focus:border-[#4bbebe] outline-none"
+                                value={datePickerValues.endDate}
+                                onChange={(e) => setDatePickerValues({...datePickerValues, endDate: e.target.value})}
+                            />
+                            <input 
+                                type="time" 
+                                className="w-full text-xs p-1.5 rounded border border-slate-300 focus:border-[#4bbebe] outline-none"
+                                value={datePickerValues.endTime}
+                                onChange={(e) => setDatePickerValues({...datePickerValues, endTime: e.target.value})}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <button 
+                    onClick={submitDatesFromPicker}
+                    className="w-full py-2 bg-[#4bbebe] hover:bg-[#3aa8a8] text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 shadow-sm"
+                >
+                    <CheckCircle className="w-4 h-4" /> 使用選擇器的日期
+                </button>
+            </div>
+        )}
+
+        <div className="flex gap-2 items-center relative">
+          <input
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleInput()}
+            placeholder={
+                step === 'DESTINATION' ? "輸入國家或城市..." :
+                step === 'DATES' ? "手動輸入 (例：下週五去日本五天) 或用上方選擇器" :
+                step === 'QUOTATION' ? "報價完成，請重新開始..." :
+                "請輸入訊息..."
+            }
+            disabled={step === 'QUOTATION' && quotes.length > 0}
+            className="flex-1 bg-slate-100 border-none rounded-full px-4 py-3 focus:ring-2 focus:ring-[#4bbebe] focus:bg-white transition-all text-sm outline-none disabled:opacity-50 text-slate-700 placeholder:text-slate-400"
+          />
+          <button 
+            onClick={handleInput}
+            disabled={!inputText.trim() || (step === 'QUOTATION' && quotes.length > 0)}
+            className="w-10 h-10 bg-[#4bbebe] hover:bg-[#3aa8a8] text-white rounded-full flex items-center justify-center transition-transform active:scale-95 disabled:bg-slate-300 disabled:cursor-not-allowed shadow-md"
+          >
+            <Send className="w-5 h-5 ml-0.5" />
+          </button>
+        </div>
+        
+        {step === 'QUOTATION' && (
+            <div className="text-center mt-2 text-xs text-slate-400">
+                AI 第一階段報價完成。
+            </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;

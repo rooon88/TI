@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "title": "Travel Insurance Application API Schema",
+    "description": "彙整台灣產物、富邦、國泰、新安東京、安達五家產險要保書之通用規格",
+    "version": "2.0.0",
+    "last_updated": "2024-05-23"
+  },
+  "definitions": {
+    "person_schema": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "中文姓名", "required": true },
+        "english_name": { "type": "string", "description": "英文姓名 (同護照)", "note": "富邦/國泰申根簽證必填" },
+        "id_no": { "type": "string", "description": "身分證字號/統編", "required": true },
+        "birth_date": { "type": "string", "format": "date", "description": "YYYY-MM-DD", "required": true },
+        "passport_no": { "type": "string", "description": "護照號碼", "note": "富邦/國泰申根簽證必填" },
+        "nationality": { "type": "string", "description": "國籍", "default": "TW" },
+        "mobile": { "type": "string", "description": "行動電話", "required": true },
+        "email": { "type": "string", "format": "email", "description": "電子信箱", "required": true },
+        "address": { "type": "string", "description": "通訊地址", "required": true },
+        "job_info": {
+          "type": "object",
+          "description": "職業資訊 (安達產險要求詳細)",
+          "properties": {
+            "company_name": { "type": "string", "description": "公司名稱" },
+            "job_title": { "type": "string", "description": "職稱" },
+            "job_content": { "type": "string", "description": "工作內容描述 (安達必填)" },
+            "job_class_code": { "type": "string", "description": "職業等級代碼" }
+          }
+        }
+      }
+    }
+  },
+  "payload": {
+    "header": {
+      "vendor_id": { "type": "string", "enum": ["TFMI", "FUBON", "CATHAY", "TMNEW", "CHUBB"], "required": true },
+      "product_code": { "type": "string", "required": true }
+    },
+    "applicant": {
+      "$ref": "#/definitions/person_schema",
+      "description": "要保人資訊",
+      "additional_fields": {
+        "relation_to_insured": { "type": "string", "enum": ["Self", "Spouse", "Parent", "Child"], "required": true }
+      }
+    },
+    "insured_list": {
+      "type": "array",
+      "description": "被保險人名冊 (支援多人投保)",
+      "items": {
+        "extends": "#/definitions/person_schema",
+        "additional_fields": {
+           "relation_to_applicant": { "type": "string", "enum": ["Self", "Spouse", "Parent", "Child"], "required": true },
+           "is_guardianship_declared": { "type": "boolean", "description": "是否受監護宣告", "required": true },
+           "has_other_medical_insurance": { "type": "boolean", "description": "是否已有其他實支實付傷害醫療險", "required": true },
+           "beneficiaries": {
+             "type": "array",
+             "description": "身故受益人列表",
+             "items": {
+               "name": { "type": "string", "description": "受益人姓名", "default": "法定繼承人" },
+               "relation": { "type": "string", "description": "與被保險人關係" },
+               "id_no": { "type": "string", "description": "受益人身分證 (新安東京必填)" },
+               "birth_date": { "type": "string", "description": "受益人因日 (新安東京必填)" },
+               "phone": { "type": "string", "description": "受益人電話 (新安東京/安達必填)" },
+               "address": { "type": "string", "description": "受益人地址 (新安東京/安達必填)" },
+               "proportion": { "type": "integer", "description": "分配比例 %" }
+             }
+           }
+        }
+      }
+    },
+    "trip_details": {
+      "destination_countries": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "旅遊國家 (富邦支援多國填寫)",
+        "required": true
+      },
+      "start_datetime": { "type": "string", "format": "datetime", "required": true },
+      "end_datetime": { "type": "string", "format": "datetime", "required": true },
+      "days": { "type": "integer", "description": "旅遊天數" },
+      "purpose": { "type": "string", "enum": ["Tourism", "Business", "Visiting", "Study", "Other"], "required": true },
+      "needs_english_cert": { "type": "boolean", "description": "是否申請英文投保證明" }
+    },
+    "payment": {
+      "method": { "type": "string", "enum": ["CreditCard"], "required": true },
+      "card_info": {
+        "card_number": { "type": "string", "description": "信用卡號" },
+        "expiry": { "type": "string", "description": "MM/YY" },
+        "cvv": { "type": "string" },
+        "holder_name": { "type": "string" }
+      }
+    },
+    "compliance": {
+      "agreements": {
+        "personal_data_protection": { "type": "boolean", "required": true, "default": true },
+        "fatca_declaration": { "type": "boolean", "description": "美國稅務居民聲明 (FATCA)", "required": true },
+        "electronic_policy_consent": { "type": "boolean", "required": true, "default": true }
+      }
+    }
+  }
+}
